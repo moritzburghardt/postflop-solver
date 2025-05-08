@@ -1,12 +1,6 @@
 use std::cell::UnsafeCell;
 use std::ops::{Deref, DerefMut};
 
-use bincode::{
-    de::{BorrowDecoder, Decoder},
-    enc::Encoder,
-    error::{DecodeError, EncodeError},
-    BorrowDecode, Decode, Encode,
-};
 
 /// Mutex-like wrapper, but it actually does not perform any locking.
 ///
@@ -86,29 +80,5 @@ impl<'a, T: ?Sized + 'a> DerefMut for MutexGuardLike<'a, T> {
     #[inline]
     fn deref_mut(&mut self) -> &mut T {
         unsafe { &mut *self.mutex.data.get() }
-    }
-}
-
-
-impl<T: Encode> Encode for MutexLike<T> {
-    #[inline]
-    fn encode<E: Encoder>(&self, encoder: &mut E) -> Result<(), EncodeError> {
-        self.lock().encode(encoder)
-    }
-}
-
-
-impl<T: Decode> Decode for MutexLike<T> {
-    #[inline]
-    fn decode<D: Decoder>(decoder: &mut D) -> Result<Self, DecodeError> {
-        Ok(Self::new(T::decode(decoder)?))
-    }
-}
-
-
-impl<'de, T: BorrowDecode<'de>> BorrowDecode<'de> for MutexLike<T> {
-    #[inline]
-    fn borrow_decode<D: BorrowDecoder<'de>>(decoder: &mut D) -> Result<Self, DecodeError> {
-        Ok(Self::new(T::borrow_decode(decoder)?))
     }
 }
