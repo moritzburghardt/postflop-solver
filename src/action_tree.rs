@@ -1,9 +1,8 @@
 use crate::bet_size::*;
 use crate::card::*;
 use crate::mutex_like::*;
+use serde::{Deserialize, Serialize};
 
-#[cfg(feature = "bincode")]
-use bincode::{Decode, Encode};
 
 pub(crate) const PLAYER_OOP: u8 = 0;
 pub(crate) const PLAYER_IP: u8 = 1;
@@ -14,8 +13,7 @@ pub(crate) const PLAYER_TERMINAL_FLAG: u8 = 8;
 pub(crate) const PLAYER_FOLD_FLAG: u8 = 24;
 
 /// Available actions of the postflop game.
-#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord)]
-#[cfg_attr(feature = "bincode", derive(Decode, Encode))]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 pub enum Action {
     /// (Default value)
     #[default]
@@ -43,10 +41,27 @@ pub enum Action {
     Chance(Card),
 }
 
+// impl Serialize for Action {
+//     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+//     where S: Serializer {
+//         let s = match self {
+//             Action::Fold => "fold".to_string(),
+//             Action::Check => "check".to_string(),
+//             Action::Call => "call".to_string(),
+//             Action::None => "None".to_string(),
+//             Action::Bet(n) => format!("bet:{}", n),
+//             Action::Raise(n) => format!("raise:{}", n),
+//             Action::AllIn(n) => format!("allin:{}", n),
+//             Action::Chance(c) => format!("chance:{}", c),
+//         };
+//         serializer.serialize_str(&s)
+//     }
+// }
+
 /// An enum representing the board state.
-#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Deserialize, Serialize)]
 #[repr(u8)]
-#[cfg_attr(feature = "bincode", derive(Decode, Encode))]
+
 pub enum BoardState {
     #[default]
     Flop = 0,
@@ -80,7 +95,7 @@ pub enum BoardState {
 /// };
 /// ```
 #[derive(Debug, Clone, Default)]
-#[cfg_attr(feature = "bincode", derive(Decode, Encode))]
+
 pub struct TreeConfig {
     /// Initial state of the game tree (flop, turn, or river).
     pub initial_state: BoardState,
@@ -147,7 +162,7 @@ pub struct ActionTree {
 }
 
 #[derive(Default)]
-#[cfg_attr(feature = "bincode", derive(Decode, Encode))]
+
 pub(crate) struct ActionTreeNode {
     pub(crate) player: u8,
     pub(crate) board_state: BoardState,

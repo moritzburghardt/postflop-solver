@@ -4,9 +4,6 @@ use regex::Regex;
 use std::fmt::Write;
 use std::str::FromStr;
 
-#[cfg(feature = "bincode")]
-use bincode::{Decode, Encode};
-
 /// A struct representing a player's range.
 ///
 /// The [`Range`] struct implements the [`FromStr`] trait, so you can construct a range from a string
@@ -38,7 +35,6 @@ use bincode::{Decode, Encode};
 /// assert_eq!(range.get_weight_offsuit(ace_rank, king_rank), 0.0);
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq)]
-#[cfg_attr(feature = "bincode", derive(Decode, Encode))]
 pub struct Range {
     data: [f32; 52 * 51 / 2],
 }

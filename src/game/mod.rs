@@ -2,10 +2,6 @@ mod base;
 mod evaluation;
 mod interpreter;
 mod node;
-
-#[cfg(feature = "bincode")]
-mod serialization;
-
 #[cfg(test)]
 mod tests;
 
@@ -14,12 +10,9 @@ use crate::card::*;
 use crate::mutex_like::*;
 use std::collections::BTreeMap;
 
-#[cfg(feature = "bincode")]
-use bincode::{Decode, Encode};
 
 #[derive(Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[repr(u8)]
-#[cfg_attr(feature = "bincode", derive(Decode, Encode))]
 enum State {
     ConfigError = 0,
     #[default]

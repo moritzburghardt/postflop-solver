@@ -2,8 +2,7 @@ use crate::hand::*;
 use crate::range::*;
 use std::mem;
 
-#[cfg(feature = "bincode")]
-use bincode::{Decode, Encode};
+
 
 /// A type representing a card, defined as an alias of `u8`.
 ///
@@ -33,7 +32,7 @@ pub const NOT_DEALT: Card = Card::MAX;
 /// };
 /// ```
 #[derive(Debug, Clone)]
-#[cfg_attr(feature = "bincode", derive(Decode, Encode))]
+
 pub struct CardConfig {
     /// Initial range of each player.
     pub range: [Range; 2],

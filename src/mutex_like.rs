@@ -1,7 +1,6 @@
 use std::cell::UnsafeCell;
 use std::ops::{Deref, DerefMut};
 
-#[cfg(feature = "bincode")]
 use bincode::{
     de::{BorrowDecoder, Decoder},
     enc::Encoder,
@@ -90,7 +89,7 @@ impl<'a, T: ?Sized + 'a> DerefMut for MutexGuardLike<'a, T> {
     }
 }
 
-#[cfg(feature = "bincode")]
+
 impl<T: Encode> Encode for MutexLike<T> {
     #[inline]
     fn encode<E: Encoder>(&self, encoder: &mut E) -> Result<(), EncodeError> {
@@ -98,7 +97,7 @@ impl<T: Encode> Encode for MutexLike<T> {
     }
 }
 
-#[cfg(feature = "bincode")]
+
 impl<T: Decode> Decode for MutexLike<T> {
     #[inline]
     fn decode<D: Decoder>(decoder: &mut D) -> Result<Self, DecodeError> {
@@ -106,7 +105,7 @@ impl<T: Decode> Decode for MutexLike<T> {
     }
 }
 
-#[cfg(feature = "bincode")]
+
 impl<'de, T: BorrowDecode<'de>> BorrowDecode<'de> for MutexLike<T> {
     #[inline]
     fn borrow_decode<D: BorrowDecoder<'de>>(decoder: &mut D) -> Result<Self, DecodeError> {

@@ -1,5 +1,4 @@
-#[cfg(feature = "bincode")]
-use bincode::{Decode, Encode};
+use strum_macros::Display;
 
 /// Bet size options for the first bets and raises.
 ///
@@ -38,7 +37,6 @@ use bincode::{Decode, Encode};
 /// assert_eq!(bet_size.raise, vec![PrevBetRelative(2.5)]);
 /// ```
 #[derive(Debug, Clone, Default, PartialEq)]
-#[cfg_attr(feature = "bincode", derive(Decode, Encode))]
 pub struct BetSizeOptions {
     /// Bet size options for first bet.
     pub bet: Vec<BetSize>,
@@ -51,14 +49,12 @@ pub struct BetSizeOptions {
 ///
 /// See the [`BetSizeOptions`] struct for the description and examples.
 #[derive(Debug, Clone, Default, PartialEq)]
-#[cfg_attr(feature = "bincode", derive(Decode, Encode))]
 pub struct DonkSizeOptions {
     pub donk: Vec<BetSize>,
 }
 
 /// Bet size specification.
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd)]
-#[cfg_attr(feature = "bincode", derive(Decode, Encode))]
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Display)]
 pub enum BetSize {
     /// Bet size relative to the current pot size.
     PotRelative(f64),

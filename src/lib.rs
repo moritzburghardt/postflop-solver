@@ -55,10 +55,6 @@
 
 #[cfg(feature = "custom-alloc")]
 mod alloc;
-
-#[cfg(feature = "bincode")]
-mod file;
-
 mod action_tree;
 mod atomic_float;
 mod bet_size;
@@ -73,9 +69,6 @@ mod range;
 mod sliceop;
 mod solver;
 mod utility;
-
-#[cfg(feature = "bincode")]
-pub use file::*;
 
 pub use action_tree::*;
 pub use bet_size::*;

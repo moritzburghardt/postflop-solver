@@ -420,7 +420,7 @@ impl PostFlopGame {
         }
 
         self.action_history.push(action);
-        self.is_normalized_weight_cached = false;
+        self.is_normalized_weight_cached = true;
     }
 
     /// Computes the normalized weights and caches them.
