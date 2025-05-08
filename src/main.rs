@@ -1,6 +1,5 @@
 use postflop_solver::*;
 use std::fs;
-use std::io::Write;
 use serde_json::json;
 
 fn main() {
@@ -85,5 +84,5 @@ fn main() {
     });
 
     let mut file:fs::File = fs::File::create("output.json").unwrap();
-    let _ = file.write(output.to_string().as_bytes());
+    serde_json::to_writer_pretty(&mut file, &output).unwrap();
 }
