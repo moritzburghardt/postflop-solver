@@ -1,10 +1,18 @@
+use std::env;
+use std::fs::File;
 use postflop_solver::*;
-use std::fs;
-use serde_json::json;
+use serde_json::{json, Value};
 
 fn main() {
-    let input_text:String = fs::read_to_string("input.json").unwrap();
-    let config: serde_json::Value = serde_json::from_str(&input_text).unwrap();
+    let args: Vec<String> = env::args().collect();
+    let job_id = &args[1];
+    println!("Processing {}", job_id);
+
+    let input_path = format!("jobs/input_{}.json", job_id);
+    let output_path = format!("jobs/output_{}.json", job_id);
+
+    let input_file = File::open(&input_path).unwrap();
+    let config: Value = serde_json::from_reader(input_file).unwrap();
 
     let turn = config.get("turn").and_then(|v| v.as_str()).and_then(|s| card_from_str(s).ok()).unwrap_or(NOT_DEALT);
     let river = config.get("river").and_then(|v| v.as_str()).and_then(|s| card_from_str(s).ok()).unwrap_or(NOT_DEALT);
@@ -86,6 +94,6 @@ fn main() {
         "nodes": traverse_node(&mut game, &mut history),
     });
 
-    let mut file:fs::File = fs::File::create("output.json").unwrap();
+    let mut file:File = File::create(&output_path).unwrap();
     serde_json::to_writer_pretty(&mut file, &output).unwrap();
 }
