@@ -44,6 +44,7 @@ fn main() {
     let max_num_iterations = 1000;
     let target_exploitability = game.tree_config().starting_pot as f32 * 0.005; // 0.5% of the pot
     let _exploitability = solve(&mut game, max_num_iterations, target_exploitability, true);
+    game.cache_normalized_weights();
     fn traverse_node(game: &mut PostFlopGame, history: &mut Vec<usize>) -> serde_json::Value {
         if game.is_chance_node() || game.is_terminal_node() {
             return json!(null);
@@ -77,6 +78,8 @@ fn main() {
     let output = json!({
         "equity_0": game.equity(0),
         "equity_1": game.equity(1),
+        "expected_values_0": game.expected_values(0),
+        "expected_values_1": game.expected_values(1),
         "initial_state": game.tree_config().initial_state,
         "hands_0": holes_to_strings(game.private_cards(0)).unwrap(),
         "hands_1": holes_to_strings(game.private_cards(1)).unwrap(),
