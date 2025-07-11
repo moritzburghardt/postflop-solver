@@ -8,10 +8,10 @@ fn main() {
     let job_id = &args[1];
     println!("Processing {}", job_id);
 
-    let input_path = format!("jobs/input_{}.json", job_id);
-    let output_path = format!("jobs/output_{}.json", job_id);
+    let config_path = format!("jobs/config_{}.json", job_id);
+    let result_path = format!("jobs/result_{}.json", job_id);
 
-    let input_file = File::open(&input_path).unwrap();
+    let input_file = File::open(&config_path).unwrap();
     let config: Value = serde_json::from_reader(input_file).unwrap();
 
     let turn = config.get("turn").and_then(|v| v.as_str()).and_then(|s| card_from_str(s).ok()).unwrap_or(NOT_DEALT);
@@ -35,7 +35,7 @@ fn main() {
         rake_cap: 0.0,
         flop_bet_sizes: [bet_sizes.clone(), bet_sizes.clone()], // [OOP, IP]
         turn_bet_sizes: [bet_sizes.clone(), bet_sizes.clone()],
-        river_bet_sizes: [bet_sizes.clone(), bet_sizes],
+        river_bet_sizes: [bet_sizes.clone(), bet_sizes.clone()],
         turn_donk_sizes: None, // use default bet sizes
         river_donk_sizes: Some(DonkSizeOptions::try_from("50%").unwrap()),
         add_allin_threshold: 1.5, // add all-in if (maximum bet size) <= 1.5x pot
@@ -49,8 +49,8 @@ fn main() {
     game.allocate_memory(false);
 
     // solve the game
-    let max_num_iterations = 1000;
-    let target_exploitability = game.tree_config().starting_pot as f32 * 0.005; // 0.5% of the pot
+    let max_num_iterations =  10_000;
+    let target_exploitability = game.tree_config().starting_pot as f32 * 0.005;
     let _exploitability = solve(&mut game, max_num_iterations, target_exploitability, true);
     game.cache_normalized_weights();
     fn traverse_node(game: &mut PostFlopGame, history: &mut Vec<usize>) -> serde_json::Value {
@@ -61,7 +61,8 @@ fn main() {
         let actions: Vec<Action> = game.available_actions();
         let strategy = game.strategy();
         let player = game.current_player();
-
+        let pot = game.current_pot();
+        let stack = game.current_stack();
         let mut children = Vec::new();
 
         for (i, _) in actions.iter().enumerate() {
@@ -77,7 +78,9 @@ fn main() {
             "actions": actions,
             "strategy": strategy,
             "player": player,
-            "children": children
+            "children": children,
+            "pot": pot,
+            "stack": stack
         })
     }
 
@@ -94,6 +97,6 @@ fn main() {
         "nodes": traverse_node(&mut game, &mut history),
     });
 
-    let mut file:File = File::create(&output_path).unwrap();
+    let mut file:File = File::create(&result_path).unwrap();
     serde_json::to_writer_pretty(&mut file, &output).unwrap();
 }

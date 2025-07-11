@@ -852,6 +852,19 @@ impl PostFlopGame {
         self.total_bet_amount
     }
 
+    /// Returns the current pot size at the current node.
+    #[inline]
+    pub fn current_pot(&self) -> i32 {
+        let node = self.node();
+        self.tree_config.starting_pot + 2 * node.amount
+    }
+
+    /// Returns the current effective stack size at the current node.
+    #[inline]
+    pub fn current_stack(&self) -> i32 {
+        self.tree_config.effective_stack - self.total_bet_amount[self.current_player()]
+    }
+
     /// Locks the strategy of the current node.
     ///
     /// The `strategy` argument must be a slice of the length of `#(actions) * #(private hands)`.
